@@ -45,7 +45,7 @@ export default function LandingPage() {
           </h1>
           <p className="text-md font-semibold text-gray-600">
             Born from a belief that everyday objects deserve extraordinary
-            attention, Maison curates pieces that transcend trends. Each item in
+            attention, PropsAndShops curates pieces that transcend trends. Each item in
             our collection is selected for its craftsmanship, materiality, and
             the quiet joy it brings to daily rituals.
           </p>
@@ -64,7 +64,7 @@ export default function LandingPage() {
         </h1>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-[95%] mx-auto">
           <Testimonials
-            det="Every piece from Maison feels like it was made just for me. The attention to detail is extraordinary."
+            det="Every piece from PropsAndShops feels like it was made just for me. The attention to detail is extraordinary."
             name="Sarah Johnson"
             role="Art Director, Paris"
           />
@@ -79,7 +79,7 @@ export default function LandingPage() {
             role="Interior Designer, Madrid"
           />
           <Testimonials
-            det="Maison understands that true luxury is restraint. Their curation is unparalleled."
+            det="PropsAndShops understands that true luxury is restraint. Their curation is unparalleled."
             name="David Kumar"
             role="Creative Director, Mumbai"
           />
@@ -89,7 +89,7 @@ export default function LandingPage() {
             role="Fashion Editor, Nigeria"
           />
           <Testimonials
-            det="The quality and design are exceptional. Maison has redefined what luxury means to me."
+            det="The quality and design are exceptional. PropsAndShops has redefined what luxury means to me."
             name="James Wilson"
             role="Creative Director, Nigeria"
           />
