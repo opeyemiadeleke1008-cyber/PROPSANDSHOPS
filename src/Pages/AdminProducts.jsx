@@ -209,6 +209,7 @@ export default function AdminProducts() {
                     onChange={(event) => setForm((prev) => ({ ...prev, description: event.target.value }))}
                     placeholder="Describe your product..."
                     rows={5}
+                    maxLength={55}
                     className="rounded-3xl border border-[#dfd4c7] px-4 py-3 outline-none"
                   />
                 </div>

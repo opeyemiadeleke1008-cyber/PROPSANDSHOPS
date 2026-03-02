@@ -27,8 +27,9 @@ export default function Faq() {
   }
 
   return (
-    <div style={{ maxWidth: '800px', margin: '40px auto', padding: '0 20px', fontFamily: 'system-ui, sans-serif' }}>
-      <h2 style={{ textAlign: 'center', marginBottom: '30px', color: '#222' }}>Frequently Asked Questions</h2>
+    <div style={{ maxWidth: '800px', margin: '40px auto', padding: '20px 20px', fontFamily: 'system-ui, sans-serif' }}>
+      <h2 className="text-2xl font-bold text-black mb-4"
+              style={{ fontFamily: '"Orbitron"' }}>Frequently Asked Questions</h2>
       
       {faqData.map((item, index) => {
         const isOpen = activeIndex === index;

@@ -25,7 +25,7 @@ export default function ProductVariantModal({ open, product, onClose, onConfirm 
   };
 
   return (
-    <div className="fixed inset-0 z-[160] flex items-center justify-center bg-black/55 p-4">
+    <div className="fixed inset-0 z-160 flex items-center justify-center bg-black/55 p-4">
       <div className="w-full max-w-md rounded-2xl bg-white p-5 shadow-2xl">
         <h3 className="text-xl font-bold text-[#1f1f1f]">Choose Options</h3>
         <p className="mt-1 text-sm text-[#666]">{product.name}</p>

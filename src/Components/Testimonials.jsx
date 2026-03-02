@@ -3,7 +3,7 @@ import React from "react";
 
 export default function Testimonials(testimonials) {
   return (
-    <div className="flex flex-col gap-4 my-10">
+    <div className="flex flex-col gap-4 m-10">
       <p>
         <Quote size={30} strokeWidth={2} className="text-amber-400"/>
       </p>

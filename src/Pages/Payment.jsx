@@ -54,7 +54,7 @@ function PaymentSuccessModal({ open, amount, onDone }) {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-[190] flex items-center justify-center bg-black/55 p-4">
+    <div className="fixed inset-0 z-190 flex items-center justify-center bg-black/55 p-4">
       <div className="w-full max-w-sm rounded-2xl bg-white p-6 text-center shadow-2xl">
         <CheckCircle2 className="mx-auto text-emerald-500" size={44} />
         <h2 className="mt-3 text-xl font-bold text-[#1f1f1f]">Payment Successful</h2>

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
 const NAV_ITEMS = [
-  { label: "Shop", to: "/buyer-dashboard" },
+  { label: "Shop", to: "/shop" },
   { label: "Orders", to: "/orders" },
   { label: "Dashboard", to: "/buyer-dashboard" },
   { label: "Messages", to: "/messages" },
@@ -26,7 +26,7 @@ export default function UserNavbar() {
       </button>
 
       {open && (
-        <div className="absolute left-0 top-14 z-[120] min-w-48 rounded-2xl border border-[#dfd7cb] bg-white p-3 shadow-2xl">
+        <div className="absolute left-0 top-14 z-120 min-w-48 rounded-2xl border border-[#dfd7cb] bg-white p-3 shadow-2xl">
           <nav className="flex flex-col text-sm font-semibold text-[#2b2b2b]">
             {NAV_ITEMS.map((item) => (
               <Link

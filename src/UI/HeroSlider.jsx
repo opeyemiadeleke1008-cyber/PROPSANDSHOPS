@@ -114,7 +114,7 @@ export default function HeroSlider() {
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") prev();
         }}
-        className="absolute left-3 top-1/2 -translate-y-1/2 z-30 grid md:p-3 p-2 bg-white border border-black rounded-full cursor-pointer text-black box-content"
+        className="absolute left-3 top-1/2 -translate-y-1/2 z-30 sm:grid md:p-3 p-2 bg-white border border-black rounded-full cursor-pointer text-black box-content hidden"
       />
 
       {/* Right arrow */}
@@ -127,7 +127,7 @@ export default function HeroSlider() {
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") next();
         }}
-        className="absolute right-3 top-1/2 -translate-y-1/2 z-30 grid md:p-3 p-2 bg-white border border-black rounded-full cursor-pointer text-black box-content"
+        className="absolute right-3 top-1/2 -translate-y-1/2 z-30 sm:grid md:p-3 p-2 bg-white border border-black rounded-full cursor-pointer text-black box-content hidden"
       />
 
       {/* Dots (optional) */}

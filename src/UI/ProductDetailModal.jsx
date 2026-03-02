@@ -4,7 +4,7 @@ export default function ProductDetailModal({ open, product, onClose }) {
   if (!open || !product) return null;
 
   return (
-    <div className="fixed inset-0 z-[150] flex items-center justify-center bg-black/55 p-4">
+    <div className="fixed inset-0 z-120 flex items-center justify-center bg-black/55 p-4">
       <div className="w-full max-w-2xl rounded-2xl bg-white p-5 shadow-2xl">
         <div className="flex items-start justify-between gap-4">
           <h2 className="text-xl font-bold text-[#1f1f1f]">{product.name}</h2>

@@ -47,7 +47,7 @@ export default function MobileNavbar() {
       </button>
 
       {open && (
-        <div className="absolute left-0 top-14 z-[120] min-w-48 rounded-2xl border border-[#dfd7cb] bg-white p-3 shadow-2xl">
+        <div className="absolute left-0 top-14 z-120 min-w-48 rounded-2xl border border-[#dfd7cb] bg-white p-3 shadow-2xl">
           <nav className="flex flex-col text-sm font-semibold text-[#2b2b2b]">
             <Link to="/shop" className="rounded-lg px-3 py-2 hover:bg-[#f3eee5]">
               Shop
