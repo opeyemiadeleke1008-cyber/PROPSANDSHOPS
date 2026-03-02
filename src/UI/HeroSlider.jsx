@@ -14,7 +14,7 @@ export default function HeroSlider() {
   );
 
   const INTERVAL_MS = 3500;
-  const PAUSE_AFTER_MANUAL_MS = 4000;
+  const PAUSE_AFTER_MANUAL_MS = 3500;
 
   const [index, setIndex] = useState(0);
   const pauseUntilRef = useRef(0);
