@@ -211,7 +211,25 @@ export default function Payment() {
 
         {cartItems.length > 0 && (
           <form className="mt-6 grid gap-5 md:grid-cols-[1.1fr_0.9fr]" onSubmit={handleConfirmOrder}>
-            <section className="rounded-2xl border bg-white p-5">
+            <aside className="order-1 h-fit rounded-2xl border bg-white p-5 md:order-2">
+              <h3 className="font-semibold">Order Summary</h3>
+              <div className="mt-4 space-y-2 text-sm">
+                {cartItems.map((item) => (
+                  <p key={item.cartKey || item.id} className="flex items-center justify-between border-b border-[#d9d5cd] pb-2 last:border-0">
+                    <span className="max-w-[75%] truncate">{item.name} x {item.quantity}</span>
+                    <span>{formatNaira(item.price * item.quantity)}</span>
+                  </p>
+                ))}
+              </div>
+              <div className="mt-4 border-t pt-3">
+                <p className="flex items-center justify-between font-semibold">
+                  <span>Total</span>
+                  <span>{formatNaira(total)}</span>
+                </p>
+              </div>
+            </aside>
+
+            <section className="order-2 rounded-2xl border bg-white p-5 md:order-1">
               {stockMessage && (
                 <div className="mb-4 rounded-xl border border-[#f0c9c0] bg-[#fff3f0] px-4 py-3 text-sm text-[#8f3e3e]">
                   {stockMessage}
@@ -344,24 +362,6 @@ export default function Payment() {
                 Confirm Order
               </button>
             </section>
-
-            <aside className="h-fit rounded-2xl border bg-white p-5">
-              <h3 className="font-semibold">Order Summary</h3>
-              <div className="mt-4 space-y-2 text-sm">
-                {cartItems.map((item) => (
-                  <p key={item.cartKey || item.id} className="flex items-center justify-between border-b border-[#d9d5cd] pb-2 last:border-0">
-                    <span className="max-w-[75%] truncate">{item.name} x {item.quantity}</span>
-                    <span>{formatNaira(item.price * item.quantity)}</span>
-                  </p>
-                ))}
-              </div>
-              <div className="mt-4 border-t pt-3">
-                <p className="flex items-center justify-between font-semibold">
-                  <span>Total</span>
-                  <span>{formatNaira(total)}</span>
-                </p>
-              </div>
-            </aside>
           </form>
         )}
       </main>

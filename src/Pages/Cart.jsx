@@ -146,9 +146,17 @@ export default function Cart() {
           <>
             <div className="mt-6 space-y-3">
               {cartItems.map((item) => (
-                <article key={item.cartKey || item.id} className="flex items-center gap-4 rounded-xl border bg-white p-4">
-                  <img src={item.image} alt={item.name} className="h-18 w-18 rounded-lg object-cover" />
-                  <div className="flex-1">
+                <article
+                  key={item.cartKey || item.id}
+                  className="rounded-xl border bg-white p-4"
+                >
+                  <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      className="h-28 w-full rounded-lg object-cover sm:h-18 sm:w-18"
+                    />
+                    <div className="flex-1">
                     <h3 className="font-semibold">{item.name}</h3>
                     <p className="truncate text-xs text-[#666]">{item.description || "No description available."}</p>
                     {(item.size || item.color) && (
@@ -159,7 +167,7 @@ export default function Cart() {
                     {typeof item.stock === "number" && (
                       <p className="text-xs font-semibold text-[#8a5a36]">Stock available: {item.stock}</p>
                     )}
-                    <div className="mt-1 flex items-center gap-2">
+                    <div className="mt-2 flex flex-wrap items-center gap-2">
                       <button
                         type="button"
                         onClick={() => updateQuantity(item.cartKey || `${item.id}`, -1)}
@@ -177,27 +185,30 @@ export default function Cart() {
                       </button>
                       <span className="ml-2 text-sm text-[#666]">{formatNaira(item.price)} each</span>
                     </div>
+                    </div>
+                    <div className="flex flex-wrap gap-2 sm:flex-col">
+                      <button
+                        type="button"
+                        onClick={() => setDetailModal({ open: true, product: item })}
+                        className="rounded-full border border-[#d9d5cd] px-3 py-1 text-sm"
+                      >
+                        View Full
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => removeFromCart(item.cartKey || `${item.id}`)}
+                        className="rounded-full border border-[#d9d5cd] px-3 py-1 text-sm"
+                      >
+                        Remove
+                      </button>
+                    </div>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => setDetailModal({ open: true, product: item })}
-                    className="rounded-full border border-[#d9d5cd] px-3 py-1 text-sm"
-                  >
-                    View Full
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => removeFromCart(item.cartKey || `${item.id}`)}
-                    className="rounded-full border border-[#d9d5cd] px-3 py-1 text-sm"
-                  >
-                    Remove
-                  </button>
                 </article>
               ))}
             </div>
-            <div className="mt-6 flex items-center justify-between rounded-xl border bg-white p-4">
+            <div className="mt-6 flex flex-col gap-4 rounded-xl border bg-white p-4 sm:flex-row sm:items-center sm:justify-between">
               <p className="font-semibold">Total: {formatNaira(total)}</p>
-              <div className="flex items-center gap-2">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
                 <button
                   type="button"
                   onClick={clearCart}
