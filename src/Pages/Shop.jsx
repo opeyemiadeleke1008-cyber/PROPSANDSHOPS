@@ -52,6 +52,10 @@ export default function Shop() {
   const sessionUser = getSessionUser();
   const [toast, setToast] = useState({ show: false, message: "", type: "info" });
   const [catalog, setCatalog] = useState(() => getMergedCatalog());
+  const [recentlyAddedId, setRecentlyAddedId] = useState("");
+  const [isSmallScreen, setIsSmallScreen] = useState(() =>
+    typeof window !== "undefined" ? window.matchMedia("(max-width: 639px)").matches : false,
+  );
   const [wishlistedIds, setWishlistedIds] = useState(() => {
     if (!sessionUser?.email) return [];
     const wishlists = getMap(WISHLISTS_KEY);
@@ -71,6 +75,17 @@ export default function Shop() {
     return () => {
       window.removeEventListener("storage", refreshCatalog);
       window.removeEventListener("propsandshops-storage-updated", refreshCatalog);
+    };
+  }, []);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(max-width: 639px)");
+    const syncScreen = (event) => setIsSmallScreen(event.matches);
+
+    setIsSmallScreen(mediaQuery.matches);
+    mediaQuery.addEventListener("change", syncScreen);
+    return () => {
+      mediaQuery.removeEventListener("change", syncScreen);
     };
   }, []);
 
@@ -153,6 +168,10 @@ export default function Shop() {
       : [...userCart, { ...product, cartKey, quantity: 1 }];
 
     saveMap(CARTS_KEY, { ...carts, [sessionUser.email]: updated });
+    setRecentlyAddedId(product.id);
+    window.setTimeout(() => {
+      setRecentlyAddedId((current) => (current === product.id ? "" : current));
+    }, 1200);
     setToast({ show: true, message: `${product.name} added to cart.`, type: "success" });
   };
 
@@ -243,27 +262,42 @@ export default function Shop() {
                 <h2 className="text-2xl font-bold text-[#1f1f1f]" style={{ fontFamily: '"Orbitron"' }}>
                   {activeSubcategory?.name || "Products"}
                 </h2>
-                <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                <div className="mt-4 grid grid-cols-2 gap-4 md:grid-cols-3">
                   {(activeSubcategory?.items || []).map((product) => (
-                    <article key={product.id} className="overflow-hidden rounded-2xl border border-[#ddd3c6] bg-white">
+                    <article
+                      key={product.id}
+                      className="relative overflow-hidden rounded-2xl border border-[#ddd3c6] bg-white cursor-pointer sm:cursor-default"
+                    >
+                      {isSmallScreen && (
+                        <button
+                          type="button"
+                          onClick={() => addToCart(product)}
+                          className="absolute inset-0 z-10 sm:hidden"
+                          aria-label={`Add ${product.name} to cart`}
+                        />
+                      )}
                       <div className="relative h-48">
                         <img src={product.image} alt={product.name} className="h-full w-full object-cover" />
                         {product.bestSeller && (
-                          <span className="absolute left-3 top-3 rounded-full bg-[#d1622d] px-3 py-1 text-xs font-bold text-white">
+                          <span className="absolute left-3 top-3 z-20 hidden rounded-full bg-[#d1622d] px-3 py-1 text-xs font-bold text-white sm:inline-flex">
                             Best Seller
                           </span>
                         )}
                         {getDiscountPercent(product) > 0 && (
-                          <span className="absolute right-3 top-3 rounded-full bg-amber-100 px-3 py-1 text-xs font-bold text-black uppercase">
+                          <span className="absolute right-3 top-3 z-20 rounded-full bg-amber-100 px-3 py-1 text-xs font-bold text-black uppercase">
                             {getDiscountPercent(product)}% Off
+                          </span>
+                        )}
+                        {recentlyAddedId === product.id && (
+                          <span className="absolute bottom-3 left-1/2 z-20 -translate-x-1/2 rounded-full bg-[#2f2d2a] px-3 py-1 text-xs font-semibold text-white sm:hidden">
+                            Added to cart
                           </span>
                         )}
                       </div>
                       <div className="space-y-2 p-4">
                         <p className="font-semibold text-[#2a2824]">{product.name}</p>
-                        <p className="line-clamp-2 text-xs text-[#68635d]">{product.description}</p>
                         {typeof product.stock === "number" && (
-                          <p className="text-xs font-semibold text-[#8a5a36]">Stock: {product.stock}</p>
+                          <p className="hidden text-xs font-semibold text-[#8a5a36] sm:block">Stock: {product.stock}</p>
                         )}
                         {getDiscountPercent(product) > 0 && getOriginalPrice(product) ? (
                           <div>
@@ -273,10 +307,13 @@ export default function Shop() {
                         ) : (
                           <p className="text-sm font-semibold text-[#5f5a53]">{formatNaira(product.price)}</p>
                         )}
-                        <div className="flex gap-2 pt-1">
+                        <div className="hidden gap-2 pt-1 sm:flex">
                           <button
                             type="button"
-                            onClick={() => addToCart(product)}
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              addToCart(product);
+                            }}
                             className="inline-flex items-center gap-1 rounded-full bg-[#2f2d2a] px-3 py-1.5 text-xs font-semibold text-white"
                           >
                             <ShoppingCart size={13} />
@@ -284,7 +321,10 @@ export default function Shop() {
                           </button>
                           <button
                             type="button"
-                            onClick={() => addToWishlist(product)}
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              addToWishlist(product);
+                            }}
                             className="inline-flex items-center gap-1 rounded-full border border-[#d7cfc2] px-3 py-1.5 text-xs font-semibold text-[#2f2d2a]"
                           >
                             <Heart size={13} className={wishlistedIds.includes(product.id) ? "fill-black text-black" : ""} />
