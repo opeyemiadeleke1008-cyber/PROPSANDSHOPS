@@ -24,12 +24,16 @@ export default function AdminHeader() {
 
   return (
     <div className="fixed left-1/2 top-4 z-50 flex w-[95%] -translate-x-1/2 items-center justify-between rounded-3xl border border-white/30 bg-white/60 px-3 py-2 shadow-2xl backdrop-blur-md sm:top-6 sm:w-[90%] sm:px-5">
+      <AdminNavbar />
       <Link to="/admin-dashboard">
-        <h1 className="text-sm font-semibold text-[#1f1f1f] sm:text-md" style={{ fontFamily: '"Orbitron"' }}>
-          PropsAndShops Admin
+        <h1
+          className="text-sm font-semibold text-[#1f1f1f] sm:text-md"
+          style={{ fontFamily: '"Orbitron"' }}
+        >
+          Admin
         </h1>
       </Link>
-      <AdminNavbar />
+
       <nav className="hidden items-center gap-2 md:flex">
         {NAV_ITEMS.map((item) => {
           const isActive = location.pathname === item.to;
@@ -50,7 +54,9 @@ export default function AdminHeader() {
       </nav>
 
       <div className="flex items-center gap-2">
-        <span className="hidden text-xs text-[#7a7166] md:block">{adminSession?.email || "Admin"}</span>
+        <span className="hidden text-xs text-[#7a7166] md:block">
+          {adminSession?.email || "Admin"}
+        </span>
         <button
           type="button"
           onClick={handleLogout}

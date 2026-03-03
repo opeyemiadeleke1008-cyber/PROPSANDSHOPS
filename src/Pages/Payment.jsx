@@ -270,7 +270,7 @@ export default function Payment() {
                     maxLength={50}
                     className="w-full rounded-lg border border-[#d9d5cd] px-3 py-2"
                   />
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid gap-3 sm:grid-cols-2">
                     <input
                       type="text"
                       value={cardData.expiry}
@@ -296,7 +296,7 @@ export default function Payment() {
 
               <div className="mt-5 space-y-3 border-t border-[#ebe5dc] pt-4">
                 <h3 className="text-sm font-semibold text-[#2f2d2a]">Billing Details</h3>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid gap-3 sm:grid-cols-2">
                   <input
                     type="text"
                     value={billing.firstName}
@@ -319,7 +319,7 @@ export default function Payment() {
                   placeholder="Email Address"
                   className="w-full rounded-lg border border-[#d9d5cd] px-3 py-2"
                 />
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid gap-3 sm:grid-cols-2">
                   <input
                     type="text"
                     value={billing.city}
@@ -350,7 +350,7 @@ export default function Payment() {
                     maxLength={10}
                     onChange={(e) => setBilling((p) => ({ ...p, phone: e.target.value }))}
                     placeholder="1234567890"
-                    className="w-full px-3 py-2 outline-none"
+                    className="min-w-0 w-full px-3 py-2 outline-none"
                   />
                 </div>
               </div>

@@ -26,7 +26,7 @@ export default function Header() {
   };
 
   return (
-    <div className="fixed top-4 z-50 flex w-[95%] items-center justify-between rounded-3xl border border-white/30 bg-white/60 px-3 py-2 shadow-2xl backdrop-blur-md sm:top-6 sm:w-[90%] sm:px-5 justify-self-center">
+    <div className="fixed left-1/2 top-4 z-50 flex w-[95%] -translate-x-1/2 items-center justify-between rounded-3xl border border-white/30 bg-white/60 px-3 py-2 shadow-2xl backdrop-blur-md sm:top-6 sm:w-[90%] sm:px-5">
       <nav className="hidden list-none gap-5 text-sm font-semibold md:flex">
         {NAV_ITEMS.map((item) => (
           <button

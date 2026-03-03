@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { CloudUpload, Image, ImagePlus } from "lucide-react";
 import AdminHeader from "../Layouts/AdminHeader";
 import {
   formatNaira,
@@ -63,9 +64,15 @@ export default function AdminProducts() {
 
   if (!adminSession?.email) return null;
 
-  const categories = useMemo(() => catalog.map((category) => category.name), [catalog]);
+  const categories = useMemo(
+    () => catalog.map((category) => category.name),
+    [catalog],
+  );
   const subcategories = useMemo(
-    () => catalog.flatMap((category) => category.subcategories.map((subcategory) => subcategory.name)),
+    () =>
+      catalog.flatMap((category) =>
+        category.subcategories.map((subcategory) => subcategory.name),
+      ),
     [catalog],
   );
 
@@ -93,7 +100,14 @@ export default function AdminProducts() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    if (!form.name.trim() || !form.description.trim() || !form.price || !form.categoryName.trim() || !form.subcategoryName.trim() || !form.image) {
+    if (
+      !form.name.trim() ||
+      !form.description.trim() ||
+      !form.price ||
+      !form.categoryName.trim() ||
+      !form.subcategoryName.trim() ||
+      !form.image
+    ) {
       return;
     }
 
@@ -107,7 +121,9 @@ export default function AdminProducts() {
           ? Math.round(((rawCompareAtPrice - price) / rawCompareAtPrice) * 100)
           : 0;
     const compareAtPrice =
-      discountPercent > 0 ? Number((price / (1 - discountPercent / 100)).toFixed(2)) : null;
+      discountPercent > 0
+        ? Number((price / (1 - discountPercent / 100)).toFixed(2))
+        : null;
 
     const nextProduct = {
       id: `admin-product-${Date.now()}`,
@@ -136,14 +152,19 @@ export default function AdminProducts() {
 
   const handleCreateCategory = (event) => {
     event.preventDefault();
-    if (!categoryForm.categoryName.trim() || !categoryForm.subcategoryName.trim()) {
+    if (
+      !categoryForm.categoryName.trim() ||
+      !categoryForm.subcategoryName.trim()
+    ) {
       return;
     }
 
     const exists = adminCategories.some(
       (entry) =>
-        entry.categoryName.toLowerCase() === categoryForm.categoryName.trim().toLowerCase() &&
-        entry.subcategoryName.toLowerCase() === categoryForm.subcategoryName.trim().toLowerCase(),
+        entry.categoryName.toLowerCase() ===
+          categoryForm.categoryName.trim().toLowerCase() &&
+        entry.subcategoryName.toLowerCase() ===
+          categoryForm.subcategoryName.trim().toLowerCase(),
     );
     if (exists) return;
 
@@ -168,7 +189,10 @@ export default function AdminProducts() {
       <main className="mx-auto w-[94%] max-w-7xl pt-28 pb-8">
         <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
           <section className="rounded-[28px] border border-[#dfd4c7] bg-[#fbf8f4] p-6">
-            <h1 className="text-3xl font-bold text-[#1f1f1f]" style={{ fontFamily: '"Orbitron"' }}>
+            <h1
+              className="text-3xl font-bold text-[#1f1f1f]"
+              style={{ fontFamily: '"Orbitron"' }}
+            >
               Add New Product
             </h1>
             <p className="mt-2 text-sm text-[#766d63]">
@@ -177,52 +201,87 @@ export default function AdminProducts() {
 
             <form className="mt-6 space-y-5" onSubmit={handleSubmit}>
               <section className="rounded-2xl border border-[#e9dfd3] bg-white p-5">
-                <p className="text-lg font-semibold text-[#25211d]">Product Photo</p>
+                <p className="text-lg font-semibold text-[#25211d]">
+                  Product Photo
+                </p>
                 <label
                   htmlFor="admin-product-image"
-                  className="mt-4 flex h-48 cursor-pointer flex-col items-center justify-center rounded-2xl border border-dashed border-[#d7cabb] bg-[#faf6f1] text-sm text-[#7f766d]"
+                  className="mt-4 flex h-48 cursor-pointer flex-col items-center justify-center rounded-2xl border border-dashed border-[#d7cabb] bg-[#faf6f1] px-4 text-center text-sm text-[#7f766d] transition hover:border-[#cf7858] hover:bg-[#f8efe5]"
                 >
                   {form.image ? (
-                    <img src={form.image} alt="Preview" className="h-full w-full rounded-2xl object-cover" />
+                    <img
+                      src={form.image}
+                      alt="Preview"
+                      className="h-full w-full rounded-2xl object-cover"
+                    />
                   ) : (
                     <>
-                      <span className="font-semibold text-[#2d2924]">Click to drop image</span>
+                      <div className="flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-sm">
+                        <CloudUpload size={30} className="text-[#cf7858]" />
+                      </div>
+                      <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-[#7a6556]">
+                        <ImagePlus size={14} />
+                        Tap to upload image
+                      </div>
+                      {/* <span className="mt-3 font-semibold text-[#2d2924]">Choose a product image</span> */}
                       <span className="mt-1 text-xs">PNG, JPG up to 10MB</span>
                     </>
                   )}
                 </label>
-                <input id="admin-product-image" type="file" accept="image/*" onChange={handleImageChange} className="hidden" />
+                <input
+                  id="admin-product-image"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="hidden"
+                />
               </section>
 
               <section className="rounded-2xl border border-[#e9dfd3] bg-white p-5">
-                <p className="text-lg font-semibold text-[#25211d]">Product Information</p>
+                <p className="text-lg font-semibold text-[#25211d]">
+                  Product Information
+                </p>
                 <div className="mt-4 grid gap-4">
                   <input
                     type="text"
                     value={form.name}
-                    onChange={(event) => setForm((prev) => ({ ...prev, name: event.target.value }))}
+                    onChange={(event) =>
+                      setForm((prev) => ({ ...prev, name: event.target.value }))
+                    }
                     placeholder="Product name"
                     className="rounded-full border border-[#dfd4c7] px-4 py-3 outline-none"
                   />
                   <textarea
                     value={form.description}
-                    onChange={(event) => setForm((prev) => ({ ...prev, description: event.target.value }))}
+                    onChange={(event) =>
+                      setForm((prev) => ({
+                        ...prev,
+                        description: event.target.value,
+                      }))
+                    }
                     placeholder="Describe your product..."
                     rows={5}
                     maxLength={55}
-                    className="rounded-3xl border border-[#dfd4c7] px-4 py-3 outline-none"
+                    className="rounded-3xl border border-[#dfd4c7] px-4 py-3 outline-none resize-none"
                   />
                 </div>
               </section>
 
               <section className="rounded-2xl border border-[#e9dfd3] bg-white p-5">
-                <p className="text-lg font-semibold text-[#25211d]">Pricing & Stock</p>
+                <p className="text-lg font-semibold text-[#25211d]">
+                  Pricing & Stock
+                </p>
                 <div className="mt-4 grid gap-4 md:grid-cols-2">
                   <input
                     type="number"
                     min="0"
                     value={form.price}
-                    onChange={(event) => setForm((prev) => ({ ...prev, price: event.target.value }))}
+                    onChange={(event) =>
+                      setForm((prev) => ({
+                        ...prev,
+                        price: event.target.value,
+                      }))
+                    }
                     placeholder="Selling price"
                     className="rounded-full border border-[#dfd4c7] px-4 py-3 outline-none"
                   />
@@ -230,7 +289,12 @@ export default function AdminProducts() {
                     type="number"
                     min="0"
                     value={form.compareAtPrice}
-                    onChange={(event) => setForm((prev) => ({ ...prev, compareAtPrice: event.target.value }))}
+                    onChange={(event) =>
+                      setForm((prev) => ({
+                        ...prev,
+                        compareAtPrice: event.target.value,
+                      }))
+                    }
                     placeholder="Compare at price (optional)"
                     className="rounded-full border border-[#dfd4c7] px-4 py-3 outline-none"
                   />
@@ -239,7 +303,12 @@ export default function AdminProducts() {
                     min="0"
                     max="99"
                     value={form.discountPercent}
-                    onChange={(event) => setForm((prev) => ({ ...prev, discountPercent: event.target.value }))}
+                    onChange={(event) =>
+                      setForm((prev) => ({
+                        ...prev,
+                        discountPercent: event.target.value,
+                      }))
+                    }
                     placeholder="Discount % (optional)"
                     className="rounded-full border border-[#dfd4c7] px-4 py-3 outline-none"
                   />
@@ -247,15 +316,26 @@ export default function AdminProducts() {
                     type="number"
                     min="0"
                     value={form.stock}
-                    onChange={(event) => setForm((prev) => ({ ...prev, stock: event.target.value }))}
+                    onChange={(event) =>
+                      setForm((prev) => ({
+                        ...prev,
+                        stock: event.target.value,
+                      }))
+                    }
                     placeholder="Stock quantity"
                     className="rounded-full border border-[#dfd4c7] px-4 py-3 outline-none"
                   />
-                  <label className="flex items-center gap-2 rounded-full border border-[#dfd4c7] px-4 py-3 text-sm font-semibold text-[#4c463f]">
+                  <label className="flex items-center gap-2 rounded-full border border-[#dfd4c7] px-4 py-3 text-sm font-semibold text-[#4c463f] cursor-pointer">
                     <input
+                      className="cursor-pointer"
                       type="checkbox"
                       checked={form.bestSeller}
-                      onChange={(event) => setForm((prev) => ({ ...prev, bestSeller: event.target.checked }))}
+                      onChange={(event) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          bestSeller: event.target.checked,
+                        }))
+                      }
                     />
                     Mark as bestseller
                   </label>
@@ -263,14 +343,21 @@ export default function AdminProducts() {
               </section>
 
               <section className="rounded-2xl border border-[#e9dfd3] bg-white p-5">
-                <p className="text-lg font-semibold text-[#25211d]">Categories</p>
+                <p className="text-lg font-semibold text-[#25211d]">
+                  Categories
+                </p>
                 <div className="mt-4 grid gap-4 md:grid-cols-2">
                   <div>
                     <input
                       list="admin-category-list"
                       type="text"
                       value={form.categoryName}
-                      onChange={(event) => setForm((prev) => ({ ...prev, categoryName: event.target.value }))}
+                      onChange={(event) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          categoryName: event.target.value,
+                        }))
+                      }
                       placeholder="Category name"
                       className="w-full rounded-full border border-[#dfd4c7] px-4 py-3 outline-none"
                     />
@@ -286,7 +373,12 @@ export default function AdminProducts() {
                       list="admin-subcategory-list"
                       type="text"
                       value={form.subcategoryName}
-                      onChange={(event) => setForm((prev) => ({ ...prev, subcategoryName: event.target.value }))}
+                      onChange={(event) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          subcategoryName: event.target.value,
+                        }))
+                      }
                       placeholder="Subcategory name"
                       className="w-full rounded-full border border-[#dfd4c7] px-4 py-3 outline-none"
                     />
@@ -310,7 +402,10 @@ export default function AdminProducts() {
 
           <aside className="space-y-6">
             <section className="rounded-[28px] border border-[#dfd4c7] bg-[#fbf8f4] p-6">
-              <h2 className="text-2xl font-bold text-[#1f1f1f]" style={{ fontFamily: '"Orbitron"' }}>
+              <h2
+                className="text-2xl font-bold text-[#1f1f1f]"
+                style={{ fontFamily: '"Orbitron"' }}
+              >
                 Create Category
               </h2>
               <form className="mt-4 space-y-3" onSubmit={handleCreateCategory}>
@@ -318,7 +413,10 @@ export default function AdminProducts() {
                   type="text"
                   value={categoryForm.categoryName}
                   onChange={(event) =>
-                    setCategoryForm((prev) => ({ ...prev, categoryName: event.target.value }))
+                    setCategoryForm((prev) => ({
+                      ...prev,
+                      categoryName: event.target.value,
+                    }))
                   }
                   placeholder="Category name"
                   className="w-full rounded-full border border-[#dfd4c7] px-4 py-3 outline-none"
@@ -327,7 +425,10 @@ export default function AdminProducts() {
                   type="text"
                   value={categoryForm.subcategoryName}
                   onChange={(event) =>
-                    setCategoryForm((prev) => ({ ...prev, subcategoryName: event.target.value }))
+                    setCategoryForm((prev) => ({
+                      ...prev,
+                      subcategoryName: event.target.value,
+                    }))
                   }
                   placeholder="Subcategory name"
                   className="w-full rounded-full border border-[#dfd4c7] px-4 py-3 outline-none"
@@ -342,25 +443,47 @@ export default function AdminProducts() {
             </section>
 
             <section className="rounded-[28px] border border-[#dfd4c7] bg-[#fbf8f4] p-6">
-              <h2 className="text-2xl font-bold text-[#1f1f1f]" style={{ fontFamily: '"Orbitron"' }}>
+              <h2
+                className="text-2xl font-bold text-[#1f1f1f]"
+                style={{ fontFamily: '"Orbitron"' }}
+              >
                 Product Preview
               </h2>
               <div className="mt-5 rounded-2xl border border-[#e9dfd3] bg-white p-4">
-                <div className="h-52 overflow-hidden rounded-2xl bg-[#f5efe8]">
+                <div className="h-52 overflow-hidden rounded-2xl bg-[#f5efe8] relative">
                   {form.image ? (
-                    <img src={form.image} alt="Preview" className="h-full w-full object-cover" />
-                  ) : null}
+                    <img
+                      src={form.image}
+                      alt="Preview"
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    <Image
+                      size={20}
+                      className="bg-white/20 rounded-full shadow-lg p-3 text-[#cf7858] inline-flex tracking-[0.28em] box-content absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+                    />
+                  )}
                 </div>
-                <p className="mt-4 font-semibold text-[#2d2924]">{form.name || "Product name"}</p>
-                <p className="mt-2 text-sm text-[#7c7369]">{form.description || "Description preview appears here."}</p>
+                <p className="mt-4 font-semibold text-[#2d2924]">
+                  {form.name || "Product name"}
+                </p>
+                <p className="mt-2 text-sm text-[#7c7369]">
+                  {form.description || "Description preview appears here."}
+                </p>
                 <p className="mt-3 font-semibold text-[#cf7858]">
                   {previewPrice ? formatNaira(previewPrice) : "₦0.00"}
                 </p>
                 {previewCompare > previewPrice && previewPrice > 0 && (
                   <div className="mt-1">
-                    <p className="text-xs text-[#8e8378] line-through">{formatNaira(previewCompare)}</p>
+                    <p className="text-xs text-[#8e8378] line-through">
+                      {formatNaira(previewCompare)}
+                    </p>
                     <p className="text-[11px] font-semibold uppercase text-[#8a5a36]">
-                      {Math.round(((previewCompare - previewPrice) / previewCompare) * 100)}% off
+                      {Math.round(
+                        ((previewCompare - previewPrice) / previewCompare) *
+                          100,
+                      )}
+                      % off
                     </p>
                   </div>
                 )}
@@ -368,23 +491,39 @@ export default function AdminProducts() {
             </section>
 
             <section className="rounded-[28px] border border-[#dfd4c7] bg-[#fbf8f4] p-6">
-              <h2 className="text-2xl font-bold text-[#1f1f1f]" style={{ fontFamily: '"Orbitron"' }}>
+              <h2
+                className="text-2xl font-bold text-[#1f1f1f]"
+                style={{ fontFamily: '"Orbitron"' }}
+              >
                 Admin Products
               </h2>
               <div className="mt-4 space-y-3">
                 {products.length === 0 ? (
-                  <p className="text-sm text-[#766d63]">No admin products yet.</p>
+                  <p className="text-sm text-[#766d63]">
+                    No admin products yet.
+                  </p>
                 ) : (
                   products.slice(0, 6).map((product) => (
-                    <article key={product.id} className="rounded-xl border border-[#e9dfd3] bg-white p-4">
+                    <article
+                      key={product.id}
+                      className="rounded-xl border border-[#e9dfd3] bg-white p-4"
+                    >
                       <div className="flex items-center gap-3">
-                        <img src={product.image} alt={product.name} className="h-14 w-14 rounded-xl object-cover" />
+                        <img
+                          src={product.image}
+                          alt={product.name}
+                          className="h-14 w-14 rounded-xl object-cover"
+                        />
                         <div>
-                          <p className="font-semibold text-[#2d2924]">{product.name}</p>
+                          <p className="font-semibold text-[#2d2924]">
+                            {product.name}
+                          </p>
                           <p className="text-xs text-[#7c7369]">
                             {product.categoryName} / {product.subcategoryName}
                           </p>
-                          <p className="text-sm font-semibold text-[#cf7858]">{formatNaira(product.price)}</p>
+                          <p className="text-sm font-semibold text-[#cf7858]">
+                            {formatNaira(product.price)}
+                          </p>
                         </div>
                       </div>
                     </article>
