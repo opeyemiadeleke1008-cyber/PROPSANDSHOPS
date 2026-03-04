@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Heart, ShoppingCart } from "lucide-react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { formatNaira, getMergedCatalog } from "../data/adminStore";
 import Footer from "../Layouts/Footer";
 import UserHeader from "../Layouts/UserHeader";
@@ -42,6 +42,11 @@ function getOriginalPrice(item) {
   const compareAtPrice = Number(item?.compareAtPrice || 0);
   const price = Number(item?.price || 0);
   return compareAtPrice > price ? compareAtPrice : null;
+}
+
+function getDiscountPercent(item) {
+  const value = Number(item?.discountPercent || 0);
+  return value > 0 ? value : 0;
 }
 
 export default function CategoryShop() {
@@ -164,6 +169,22 @@ export default function CategoryShop() {
     setToast({ show: true, message: `${item.name} added to wishlist.`, type: "success" });
   };
 
+  const toggleWishlist = (item) => {
+    const wishlists = getMap(WISHLISTS_KEY);
+    const list = wishlists[sessionUser.email] || [];
+    const exists = list.some((wishlistItem) => wishlistItem.id === item.id);
+
+    if (exists) {
+      const updated = list.filter((wishlistItem) => wishlistItem.id !== item.id);
+      saveMap(WISHLISTS_KEY, { ...wishlists, [sessionUser.email]: updated });
+      setWishlistedIds((prev) => prev.filter((id) => id !== item.id));
+      setToast({ show: true, message: `${item.name} removed from wishlist.`, type: "info" });
+      return;
+    }
+
+    addToWishlist(item);
+  };
+
   return (
     <div className="min-h-screen bg-[#f6f4ef]">
       <UserHeader />
@@ -203,7 +224,34 @@ export default function CategoryShop() {
               key={item.id}
               className="group overflow-hidden rounded-2xl border border-[#ddd3c6] bg-white shadow-[0_8px_24px_rgba(0,0,0,0.04)]"
             >
-              <img src={item.image} alt={item.name} className="h-45 w-full object-cover" />
+              <div className="relative h-45">
+                <img src={item.image} alt={item.name} className="h-45 w-full object-cover" />
+                {getDiscountPercent(item) > 0 && (
+                  <span className="absolute left-3 top-3 z-20 rounded-full bg-amber-100 px-3 py-1 text-xs font-bold text-black uppercase">
+                    {getDiscountPercent(item)}% Off
+                  </span>
+                )}
+                <button
+                  type="button"
+                  onClick={() => toggleWishlist(item)}
+                  className="absolute right-3 top-3 z-20 inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/95 text-[#1f1f1f] shadow-sm transition hover:bg-white"
+                  aria-label={
+                    wishlistedIds.includes(item.id)
+                      ? `Remove ${item.name} from wishlist`
+                      : `Add ${item.name} to wishlist`
+                  }
+                >
+                  <Heart size={14} className={wishlistedIds.includes(item.id) ? "fill-black text-black" : ""} />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleAddToCart(item)}
+                  className="absolute bottom-3 left-1/2 z-20 inline-flex h-10 w-10 -translate-x-1/2 items-center justify-center rounded-full bg-[#2f2d2a]/92 text-sm font-semibold text-white opacity-100 transition sm:h-auto sm:w-auto sm:gap-1 sm:rounded-2xl sm:px-5 sm:py-2 sm:translate-y-2 sm:opacity-0 sm:group-hover:translate-y-0 sm:group-hover:opacity-100"
+                >
+                  <ShoppingCart size={14} />
+                  <span className="hidden sm:inline">Add to Cart</span>
+                </button>
+              </div>
               <div className="p-4">
                 <h3 className="font-semibold text-[#252220]">{item.name}</h3>
                 <p className="truncate text-xs text-[#666]">{item.description}</p>
@@ -218,24 +266,6 @@ export default function CategoryShop() {
                 ) : (
                   <p className="text-sm text-[#6a655d]">{formatNaira(item.price)}</p>
                 )}
-                <div className="mt-3 flex gap-2">
-                  <button
-                    type="button"
-                    onClick={() => handleAddToCart(item)}
-                    className="inline-flex items-center gap-2 rounded-full bg-[#2f2d2a] px-3 py-1.5 text-sm font-semibold text-white"
-                  >
-                    <ShoppingCart size={14} />
-                    Add to Cart
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => addToWishlist(item)}
-                    className="inline-flex items-center gap-1 rounded-full border border-[#d7cfc2] px-3 py-1.5 text-sm font-semibold text-[#2f2d2a]"
-                  >
-                    <Heart size={14} className={wishlistedIds.includes(item.id) ? "fill-black" : ""} />
-                    Wishlist
-                  </button>
-                </div>
               </div>
             </article>
           ))}

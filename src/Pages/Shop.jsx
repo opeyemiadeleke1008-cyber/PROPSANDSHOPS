@@ -53,9 +53,6 @@ export default function Shop() {
   const [toast, setToast] = useState({ show: false, message: "", type: "info" });
   const [catalog, setCatalog] = useState(() => getMergedCatalog());
   const [recentlyAddedId, setRecentlyAddedId] = useState("");
-  const [isSmallScreen, setIsSmallScreen] = useState(() =>
-    typeof window !== "undefined" ? window.matchMedia("(max-width: 639px)").matches : false,
-  );
   const [wishlistedIds, setWishlistedIds] = useState(() => {
     if (!sessionUser?.email) return [];
     const wishlists = getMap(WISHLISTS_KEY);
@@ -75,17 +72,6 @@ export default function Shop() {
     return () => {
       window.removeEventListener("storage", refreshCatalog);
       window.removeEventListener("propsandshops-storage-updated", refreshCatalog);
-    };
-  }, []);
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia("(max-width: 639px)");
-    const syncScreen = (event) => setIsSmallScreen(event.matches);
-
-    setIsSmallScreen(mediaQuery.matches);
-    mediaQuery.addEventListener("change", syncScreen);
-    return () => {
-      mediaQuery.removeEventListener("change", syncScreen);
     };
   }, []);
 
@@ -129,11 +115,6 @@ export default function Shop() {
       activeCategory?.subcategories[0],
     [activeCategory, activeSubcategorySlug],
   );
-  const categoryBestSellers = useMemo(
-    () => activeCategory?.subcategories.flatMap((sub) => sub.items).filter((item) => item.bestSeller) || [],
-    [activeCategory],
-  );
-
   const addToCart = (product) => {
     if (!sessionUser?.email) {
       navigate("/signin");
@@ -189,6 +170,26 @@ export default function Shop() {
     saveMap(WISHLISTS_KEY, { ...wishlists, [sessionUser.email]: [...list, product] });
     setWishlistedIds((prev) => (prev.includes(product.id) ? prev : [...prev, product.id]));
     setToast({ show: true, message: `${product.name} added to wishlist.`, type: "success" });
+  };
+
+  const toggleWishlist = (product) => {
+    if (!sessionUser?.email) {
+      navigate("/signin");
+      return;
+    }
+    const wishlists = getMap(WISHLISTS_KEY);
+    const list = wishlists[sessionUser.email] || [];
+    const exists = list.some((entry) => entry.id === product.id);
+
+    if (exists) {
+      const updated = list.filter((entry) => entry.id !== product.id);
+      saveMap(WISHLISTS_KEY, { ...wishlists, [sessionUser.email]: updated });
+      setWishlistedIds((prev) => prev.filter((id) => id !== product.id));
+      setToast({ show: true, message: `${product.name} removed from wishlist.`, type: "info" });
+      return;
+    }
+
+    addToWishlist(product);
   };
 
   return (
@@ -266,30 +267,43 @@ export default function Shop() {
                   {(activeSubcategory?.items || []).map((product) => (
                     <article
                       key={product.id}
-                      className="relative overflow-hidden rounded-2xl border border-[#ddd3c6] bg-white cursor-pointer sm:cursor-default"
+                      className="group relative overflow-hidden rounded-2xl border border-[#ddd3c6] bg-white"
                     >
-                      {isSmallScreen && (
-                        <button
-                          type="button"
-                          onClick={() => addToCart(product)}
-                          className="absolute inset-0 z-10 sm:hidden"
-                          aria-label={`Add ${product.name} to cart`}
-                        />
-                      )}
                       <div className="relative h-48">
                         <img src={product.image} alt={product.name} className="h-full w-full object-cover" />
-                        {product.bestSeller && (
-                          <span className="absolute left-3 top-3 z-20 hidden rounded-full bg-[#d1622d] px-3 py-1 text-xs font-bold text-white sm:inline-flex">
-                            Best Seller
-                          </span>
-                        )}
                         {getDiscountPercent(product) > 0 && (
-                          <span className="absolute right-3 top-3 z-20 rounded-full bg-amber-100 px-3 py-1 text-xs font-bold text-black uppercase">
+                          <span className="absolute left-3 top-3 z-20 rounded-full bg-amber-100 px-3 py-1 text-xs font-bold text-black uppercase">
                             {getDiscountPercent(product)}% Off
                           </span>
                         )}
+                        <button
+                          type="button"
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            toggleWishlist(product);
+                          }}
+                          className="absolute right-3 top-3 z-20 inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/95 text-[#1f1f1f] shadow-sm transition hover:bg-white"
+                          aria-label={
+                            wishlistedIds.includes(product.id)
+                              ? `Remove ${product.name} from wishlist`
+                              : `Add ${product.name} to wishlist`
+                          }
+                        >
+                          <Heart size={16} className={wishlistedIds.includes(product.id) ? "fill-black text-black" : ""} />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={(event) => {
+                            event.stopPropagation();
+                            addToCart(product);
+                          }}
+                          className="absolute bottom-3 left-1/2 z-20 inline-flex h-10 w-10 -translate-x-1/2 items-center justify-center rounded-full bg-white/90 text-sm font-semibold text-[#2f2d2a] opacity-100 transition sm:h-auto sm:w-auto sm:gap-1 sm:rounded-2xl sm:px-5 sm:py-2 sm:translate-y-2 sm:opacity-0 sm:group-hover:translate-y-0 sm:group-hover:opacity-100"
+                        >
+                          <ShoppingCart size={14} />
+                          <span className="hidden sm:inline">Add to Cart</span>
+                        </button>
                         {recentlyAddedId === product.id && (
-                          <span className="absolute bottom-3 left-1/2 z-20 -translate-x-1/2 rounded-full bg-[#2f2d2a] px-3 py-1 text-xs font-semibold text-white sm:hidden">
+                          <span className="absolute bottom-14 left-1/2 z-20 -translate-x-1/2 rounded-full bg-[#2f2d2a] px-3 py-1 text-xs font-semibold text-white sm:hidden">
                             Added to cart
                           </span>
                         )}
@@ -307,30 +321,6 @@ export default function Shop() {
                         ) : (
                           <p className="text-sm font-semibold text-[#5f5a53]">{formatNaira(product.price)}</p>
                         )}
-                        <div className="hidden gap-2 pt-1 sm:flex">
-                          <button
-                            type="button"
-                            onClick={(event) => {
-                              event.stopPropagation();
-                              addToCart(product);
-                            }}
-                            className="inline-flex items-center gap-1 rounded-full bg-[#2f2d2a] px-3 py-1.5 text-xs font-semibold text-white"
-                          >
-                            <ShoppingCart size={13} />
-                            Add to Cart
-                          </button>
-                          <button
-                            type="button"
-                            onClick={(event) => {
-                              event.stopPropagation();
-                              addToWishlist(product);
-                            }}
-                            className="inline-flex items-center gap-1 rounded-full border border-[#d7cfc2] px-3 py-1.5 text-xs font-semibold text-[#2f2d2a]"
-                          >
-                            <Heart size={13} className={wishlistedIds.includes(product.id) ? "fill-black text-black" : ""} />
-                            Wishlist
-                          </button>
-                        </div>
                       </div>
                     </article>
                   ))}
@@ -341,7 +331,7 @@ export default function Shop() {
         </section>
 
         {catalog.length > 0 && (
-          <section className="mt-8 grid gap-5 md:grid-cols-2">
+          <section className="mt-8 grid gap-5 md:grid-cols-1">
             <article className="rounded-2xl border border-[#ddd3c6] bg-white p-5">
               <h3 className="inline-flex items-center gap-2 text-xl font-bold text-[#1f1f1f]" style={{ fontFamily: '"Orbitron"' }}>
                 <Tag size={18} />
@@ -366,24 +356,6 @@ export default function Shop() {
                         </div>
                       </div>
                     ))
-                )}
-              </div>
-            </article>
-
-            <article className="rounded-2xl border border-[#ddd3c6] bg-white p-5">
-              <h3 className="text-xl font-bold text-[#1f1f1f]" style={{ fontFamily: '"Orbitron"' }}>
-                Best Sellers
-              </h3>
-              <div className="mt-4 space-y-3">
-                {categoryBestSellers.length === 0 ? (
-                  <p className="text-sm text-[#6b675f]">No best sellers in this category yet.</p>
-                ) : (
-                  categoryBestSellers.slice(0, 4).map((item) => (
-                    <div key={`${item.id}-category`} className="flex items-center justify-between rounded-lg bg-[#f7f2e9] px-3 py-2">
-                      <p className="text-sm font-semibold text-[#2f2d2a]">{item.name}</p>
-                      <p className="text-sm font-semibold text-[#8a5a36]">{formatNaira(item.price)}</p>
-                    </div>
-                  ))
                 )}
               </div>
             </article>
